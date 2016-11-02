@@ -1,0 +1,48 @@
+name: systemf
+version: 0.1.0.0
+synopsis: System F interpreter
+license: MIT
+license-file: LICENSE
+maintainer: Nicolas Frisby <nicolas.frisby@gmail.com>
+copyright: 2016 Nicolas Frisby
+build-type: Simple
+cabal-version: >= 1.10
+description:
+
+  A deep EDSL for System F and a minimal interpreter. The pervasive
+  use of de Bruijn indices relegates this package to a
+  proof-of-concept.
+
+flag werror
+  description: Enable -Werror
+  default: False
+  manual: True
+
+library
+  default-language: Haskell2010
+  ghc-options: -Wall
+  if flag(werror)
+    ghc-options: -Werror
+
+  default-extensions:
+    GADTs
+    Rank2Types
+    TypeFamilies
+    TypeInType
+    TypeOperators
+
+  hs-source-dirs:
+    .
+  exposed-modules:
+    N
+    Test
+    Tm
+    Tm.Interpret
+    Tm.Ty
+    Ty
+    Ty.Interpret
+    Ty.Lemmas
+    Ty.Subst
+    Ty.Weaken
+  build-depends:
+    base >=4.7 && <5

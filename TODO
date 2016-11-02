@@ -1,0 +1,14 @@
+Prove Ty.Lemmas lemmas. (A quick check prompted the switch from :~: to
+Coercion, and now it looks promising.)
+
+Pretty-printer.
+
+Weakening, substitution, small-stop interpreter for terms.
+
+Partial function from a weakly-typed term to (exists a. Tm '[] '[] a).
+
+Let and letrec.
+
+Consider indexing Ty by TCtx to enforce scoping in types. That would
+constitute a genuine use of -XTypeInType; it's only being used for
+kind synonyms, at the moment. Further, consider System F Omega.
