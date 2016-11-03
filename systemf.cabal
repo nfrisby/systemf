@@ -34,8 +34,8 @@ library
   hs-source-dirs:
     .
   exposed-modules:
+    Idx
     N
-    Test
     Tm
     Tm.Interpret
     Tm.Ty

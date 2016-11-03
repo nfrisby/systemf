@@ -9,6 +9,6 @@ Partial function from a weakly-typed term to (exists a. Tm '[] '[] a).
 
 Let and letrec.
 
-Consider indexing Ty by TCtx to enforce scoping in types. That would
-constitute a genuine use of -XTypeInType; it's only being used for
-kind synonyms, at the moment. Further, consider System F Omega.
+Keep an eye on https://ghc.haskell.org/trac/ghc/ticket/12709, with
+respect to Tm.Interpret not loading in GHCi (and probably also Test.hs
+not compiling correctly when included in the library).

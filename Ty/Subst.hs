@@ -1,25 +1,28 @@
 {-# Language UndecidableInstances #-}
 
-module Ty.Subst where
+module Ty.Subst (Subst) where
 
-import N
+import Data.Kind (Type)
+
+import Idx
 import Ty
+import Ty.Weaken
+
+data C :: Ki -> TCtx -> TCtx -> Type where
+  CZ :: Ty tgam ka -> C ka tgam (ka ': tgam)
+  CS :: C ka tgam tgam' -> C ka (k ': tgam) (k ': tgam')
 
 -- | Substituate @image@ for @0@.
-type Subst image ty = Subst_ 'Z image ty
+type Subst image ty = Subst_ ('CZ image) ty
 
 -- | Replace @m@ with @image@, and decrement all variables @> m@.
-type family Subst_ (m :: TVar) (image :: Ty) (ty :: Ty) :: Ty where
-  Subst_ m image ('Fun a b) = 'Fun (Subst_ m image a) (Subst_ m image b)
-  Subst_ m image ('ForAll b) = 'ForAll (Subst_ ('S m) image b)   -- undecidable
-  Subst_ m image ('TVar n) = Subst_Var m image n   -- undecidable
+type family Subst_ (m :: C ka tgam tgam') (ty :: Ty tgam' kb) :: Ty tgam kb where
+  Subst_ m ('Fun a b) = 'Fun (Subst_ m a) (Subst_ m b)
+  Subst_ m ('ForAll b) = 'ForAll (Subst_ ('CS m) b)   -- undecidable
+  Subst_ m ('TyApp a b) = 'TyApp (Subst_ m a) (Subst_ m b)
+  Subst_ m ('TVar n) = Subst_Var_ m n   -- undecidable
 
--- | Replace @m@ with @image@, and decrement any variable @> m@.
-type Subst_Var m image n = Subst_Var_ 'Z m image n
-
--- | Replace @o + m@ with @image@, and decrement any variable @> o + m@.
-type family Subst_Var_ (o :: N) (m :: N) (image :: Ty) (n :: TVar) :: Ty where
-  Subst_Var_ _ 'Z image 'Z = image
-  Subst_Var_ o 'Z _ ('S n) = 'TVar (Add o n)
-  Subst_Var_ o ('S m) image 'Z = 'TVar o
-  Subst_Var_ o ('S m) image ('S n) = Subst_Var_ ('S o) m image n
+type family Subst_Var_ (m :: C ka tgam tgam') (n :: Idx tgam' kb) :: Ty tgam kb where
+  Subst_Var_ ('CZ image) 'IZ = image
+  Subst_Var_ ('CS m) 'IZ = 'TVar 'IZ
+  Subst_Var_ ('CS m) ('IS n) = Weaken (Subst_Var_ m n)

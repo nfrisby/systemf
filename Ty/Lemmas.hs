@@ -15,12 +15,13 @@ import Ty.Interpret
 -- It would be sound to upgrade 'Coercion' to 'Data.Type.Equality.:~:'
 -- if it weren't for the 'FA' wrapper.
 lemmaWeaken ::
-    p1 a
- -> p2 trho (ty ': x1)
+    p1 k
+ -> p2 a
+ -> p3 (trho :: TEnv tgam) (ty ': x1)
  -> Coercion
       (Interpret trho ty)
-      (Interpret (a ': trho) (Weaken ty))
-lemmaWeaken _ _ = unsafeCoerce (Coercion :: Coercion () ())
+      (Interpret ('TES trho a :: TEnv (k ': tgam)) (Weaken ty))
+lemmaWeaken _ _ _ = unsafeCoerce (Coercion :: Coercion () ())
 
 -- | Lemma relating interpretation and substitution for types.
 --
@@ -29,10 +30,10 @@ lemmaWeaken _ _ = unsafeCoerce (Coercion :: Coercion () ())
 -- It would be sound to upgrade 'Coercion' to 'Data.Type.Equality.:~:'
 -- if it weren't for the 'FA' wrapper.
 lemmaSubst ::
-    p1 trho (x1 :: k1)
- -> p2 (x2 :: k2) (x3 :: k3) ('ForAll fun)
- -> p3 (x4 :: k4) ty
+    p1 (trho :: TEnv tgam) gam
+ -> p2 ('ForAll fun)
+ -> p3 ty
  -> Coercion
-      (Interpret (Interpret trho ty ': trho) fun)
+      (Interpret ('TES trho (Interpret trho ty)) fun)
       (Interpret trho (Subst ty fun))
 lemmaSubst _ _ _ = unsafeCoerce (Coercion :: Coercion () ())
